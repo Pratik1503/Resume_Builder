@@ -1,6 +1,6 @@
 import React from 'react'
 import classes from "./Header.module.css"
-import resumeSVG from "../assets/resume.svg"
+import resumeSVG from "../../assets/resume.svg"
 const Header = () => {
   return (
     <div className={classes.container}>
