@@ -143,17 +143,17 @@ const Editor = (props) => {
         <InputControl
           label="Deployed Link"
           placeholder="Enter deployed link of project"
-          value={values.deployLink}
+          value={values.link}
           onChange={(event) =>
-            setValues((prev) => ({ ...prev, deployLink: event.target.value }))
+            setValues((prev) => ({ ...prev, link: event.target.value }))
           }
         />
         <InputControl
           label="Github Link"
           placeholder="Enter github link of project"
-          value={values.githubLink}
+          value={values.github}
           onChange={(event) =>
-            setValues((prev) => ({ ...prev, githubLink: event.target.value }))
+            setValues((prev) => ({ ...prev, github: event.target.value }))
           }
         />
       </div>
@@ -468,6 +468,31 @@ const Editor = (props) => {
         break;
       }
 
+      case sections.summary:{
+        const tempSummary=values.summary;
+        props.setInformation(prev=>({
+          ...prev,
+          [sections.summary]:{
+            ...prev[sections.summary],
+            detail:tempSummary,
+            sectionTitle
+          }
+        }))
+        break;
+      }
+      case sections.other:{
+        const tempOther=values.other;
+        props.setInformation(prev=>({
+          ...prev,
+          [sections.other]:{
+            ...prev[sections.other],
+            detail:tempOther,
+            sectionTitle
+          }
+        }))
+        break;
+      }
+
       default: {
         console.log("default");
       }
@@ -476,8 +501,8 @@ const Editor = (props) => {
 
   useEffect(() => {
     const activeInfo = information[sections[activeSectionKey]];
+    setActiveIndex(0)
     setActiveInformation(activeInfo);
-    setActiveIndex(0);
     setSectionTitle(sections[activeSectionKey]);
 
     setValues({
@@ -522,6 +547,8 @@ const Editor = (props) => {
       college: activeInfo?.details
         ? activeInfo.details[activeIndex]?.college || ""
         : "",
+      summary: typeof activeInfo?.detail !== "object" ? activeInfo.detail : "",
+      other: typeof activeInfo?.detail !== "object" ? activeInfo.detail : "",
     });
   }, [activeSectionKey]);
 
@@ -529,10 +556,37 @@ const Editor = (props) => {
     setActiveInformation(information[sections[activeSectionKey]]);
   }, [information]);
 
+   useEffect(() => {
+    const details = activeInformation?.details;
+    if (!details) return;
+
+    const activeInfo = information[sections[activeSectionKey]];
+    setValues({
+      overview: activeInfo.details[activeIndex]?.overview || "",
+      link: activeInfo.details[activeIndex]?.link || "",
+      certificationLink:
+        activeInfo.details[activeIndex]?.certificationLink || "",
+      companyName: activeInfo.details[activeIndex]?.companyName || "",
+      location: activeInfo.details[activeIndex]?.location || "",
+      startDate: activeInfo.details[activeIndex]?.startDate || "",
+      endDate: activeInfo.details[activeIndex]?.endDate || "",
+      points: activeInfo.details[activeIndex]?.points || "",
+      title: activeInfo.details[activeIndex]?.title || "",
+      linkedin: activeInfo.details[activeIndex]?.linkedin || "",
+      github: activeInfo.details[activeIndex]?.github || "",
+      college: activeInfo.details[activeIndex]?.college || "",
+    });
+  }, [activeIndex]);
+  
+
+
   const handleAddNew = () => {
 const details = activeInformation?.details;
     if (!details) return;
+    console.log("details : ",details)
     const lastDetail = details.slice(-1)[0];
+
+    console.log("lastDetails : ",lastDetail)
     if (!Object.keys(lastDetail).length) return;
     details?.push({});
 
@@ -545,6 +599,24 @@ const details = activeInformation?.details;
     }));
     setActiveIndex(details?.length - 1);
   };
+
+  const handleDelete = (indexToRemove) => {
+    const details =activeInformation?.details
+    if(!details) return 
+    details.splice(indexToRemove,1);
+
+    props.setInformation(prev=>({
+      ...prev,
+      [sections[activeSectionKey]]:{
+        ...information[sections[activeSectionKey]],
+        details: details,
+      }
+    }))
+     setActiveIndex((prev)=>(prev===indexToRemove?0:prev-1))
+  }
+
+
+
   return (
     <div className={classes.container}>
       <div className={classes.header}>
@@ -586,7 +658,9 @@ const details = activeInformation?.details;
                   <p>
                     {activeInformation.sectionTitle} {index + 1}
                   </p>
-                  <X />
+                  <X onClick={(event)=>{
+                    event.stopPropagation();
+                    handleDelete(index)}} />
                 </div>
               ))
             : null}

@@ -4,7 +4,7 @@ const InputForm = ({label,...props}) => {
   return (
     <div className={classes.container}>
         {label && <label>{label}</label>}
-        <input type='text' {...props} />
+        <input type='text' {...props} required />
         
     </div>
   )

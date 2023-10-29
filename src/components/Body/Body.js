@@ -1,10 +1,12 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import classes from "./Body.module.css";
 import ToolBar from "./ToolBar";
 import Editor from "../Editor/Editor";
-
+import Resume from "../Resume/Resume";
 const Body = () => {
 
+  const [activeColor,setActiveColor]=useState('#239ce2');
+  const resumeRef=useRef();
   const sections={
     basicInfo: "Basic Info",
     workExp: "Work Experience",
@@ -58,11 +60,20 @@ useEffect(()=>{
   console.log(resumeInformation)
   },[resumeInformation])
   
+
+  const activeColorHandler=(color)=>{
+    setActiveColor(color);
+  }
   return (
     <div className={classes.container}>
       <p className={classes.heading}>Resume Builder</p>
-      <ToolBar />
-      <Editor sections={sections} information={resumeInformation} setInformation={setResumeInformation}/>
+      <ToolBar  onActiveColor={activeColorHandler} resumeRef={resumeRef} />
+
+      <div className={classes.main}>
+        <Editor sections={sections} information={resumeInformation} setInformation={setResumeInformation}/>
+        <Resume information={resumeInformation} sections={sections} activeColor={activeColor
+        }  resumeRef={resumeRef} />
+      </div>
     </div>
   );
 };
