@@ -234,8 +234,7 @@ const Resume = (props) => {
       </div>
     )
   }
-`  Lorem ipsum dolor sit amet consectetur adipisicing elit. Minus voluptatem, voluptate est quidem veritatis sequi voluptatum iure ex tenetur molestias veniam exercitationem asperiores nam ad neque. Nemo fugit debitis quos!
-`
+
   useEffect(() => {
 
     setColumn([
